@@ -22,9 +22,8 @@ dependencies = [
     "psycopg-pool>=3.3.1",
     "langgraph-checkpoint-sqlite>=3.1.1",
     "pandas>=3.0.5",
-    "selenium>=4.49.0",
-    "webdriver-manager>=4.1.2",
     "langchain-openai>=1.6.2",
+    "psycopg2-binary>=2.9.13",
 ]
 
 [dependency-groups]
