@@ -208,10 +208,6 @@ def best_deal_node(state: GraphState):
 
     available = list(deals)
 
-    print('\n')
-    print('Available Deals')
-    print('\n')
-    print(available)
 
     available.sort(
         key=lambda deal: deal.effective_price
@@ -224,6 +220,11 @@ def best_deal_node(state: GraphState):
         }
 
     best = available[0]
+
+    print('\n')
+    print('Available Best Deal')
+    print('\n')
+    print(best)
 
     alternatives = []
 
@@ -240,6 +241,11 @@ def best_deal_node(state: GraphState):
         if len(alternatives) == 2:
             break
 
+    print('\n')
+    print('Available Alternative Deals')
+    print('\n')
+    print(alternatives)
+    
     return {
         "best_deal": best,
         "alternatives": alternatives
