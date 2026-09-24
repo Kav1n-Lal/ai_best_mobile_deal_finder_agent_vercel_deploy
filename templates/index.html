@@ -1,0 +1,154 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Best Deals AI</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', path='style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+    <main class="landing-page">
+
+        <div class="logo">
+            📱 Best Deals AI
+        </div>
+
+
+        <div class="landing-card">
+
+            <div class="icon-circle">
+                📱
+            </div>
+
+
+            <h1>
+                Find the Best Mobile Deals
+            </h1>
+
+
+            <p class="subtitle">
+                Find the best mobile phone deals based
+                on your requirements and budget.
+            </p>
+
+
+            <form
+                action="/chat"
+                method="GET"
+            >
+
+                <label for="thread_id">
+                    Thread ID
+                </label>
+
+
+                <input
+                    type="text"
+                    id="thread_id"
+                    name="thread_id"
+                    placeholder="Enter your thread ID"
+                    required
+                    autocomplete="off"
+                >
+
+
+                <p class="input-help">
+                    Your Thread ID is used to maintain
+                    your LangGraph conversation memory.
+                </p>
+
+
+                <button
+                    type="submit"
+                    class="primary-button"
+                >
+                    Start Shopping
+                    <span>→</span>
+                </button>
+
+            </form>
+
+
+            <div class="example">
+
+                <strong>Example:</strong>
+                user-12345
+
+            </div>
+
+        </div>
+
+    </main>
+
+</body>
+
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Mobile Deals</title>
+
+    <link
+        rel="stylesheet"
+        href="/static/css/chat.css"
+    >
+</head>
+
+<body class="landing-page">
+
+    <div class="landing-container">
+
+        <div class="brand-icon">
+            📱
+        </div>
+
+        <h1>Mobile Deals Assistant</h1>
+
+        <p>
+            Find the best mobile deals or ask questions
+            about phones, retailers, stock and availability.
+        </p>
+
+        <button
+            id="startChatButton"
+            class="primary-button"
+        >
+            Start Chat
+        </button>
+
+    </div>
+
+    <script>
+        document
+            .getElementById("startChatButton")
+            .addEventListener("click", () => {
+
+                const threadId = crypto.randomUUID();
+
+                window.location.href =
+                    `/chat?thread_id=${encodeURIComponent(threadId)}`;
+            });
+    </script>
+
+</body>
+</html>
+

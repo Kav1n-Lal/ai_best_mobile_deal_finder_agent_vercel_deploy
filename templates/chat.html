@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Mobile Deals Assistant</title>
+
+    <link
+        rel="stylesheet"
+        href="/static/css/chat.css"
+    >
+
+</head>
+
+
+<body>
+
+<div class="app-container">
+
+    <!-- =========================
+         SIDEBAR
+    ========================== -->
+
+    <aside
+        id="sidebar"
+        class="sidebar"
+    >
+
+        <div class="sidebar-header">
+
+            <div class="sidebar-title">
+                Chat History
+            </div>
+
+            <button
+                id="closeSidebarButton"
+                class="icon-button"
+                title="Close"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="history-info">
+
+            <span>Current conversation</span>
+
+            <small id="historyThreadId">
+                -
+            </small>
+
+        </div>
+
+
+        <div
+            id="historyMessages"
+            class="history-messages"
+        >
+        </div>
+
+
+        <div class="sidebar-footer">
+
+            <button
+                id="clearChatButton"
+                class="danger-button"
+            >
+                🗑 Clear Chat
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =========================
+         MAIN CHAT
+    ========================== -->
+
+    <main class="chat-container">
+
+        <!-- HEADER -->
+
+        <header class="chat-header">
+
+            <div class="header-left">
+
+                <button
+                    id="historyButton"
+                    class="header-button"
+                >
+                    ☰
+                    <span>Chat History</span>
+                </button>
+
+            </div>
+
+
+            <div class="header-center">
+
+                <div class="app-title">
+                    📱 Mobile Deals Assistant
+                </div>
+
+            </div>
+
+
+            <div class="header-right">
+
+                <button
+                    id="newChatButton"
+                    class="header-button"
+                >
+                    + New Chat
+                </button>
+
+            </div>
+
+        </header>
+
+
+        <!-- CHAT -->
+
+        <section
+            id="chatMessages"
+            class="chat-messages"
+        >
+
+            <div
+                id="welcomeMessage"
+                class="welcome-message"
+            >
+
+                <div class="welcome-icon">
+                    📱
+                </div>
+
+                <h2>
+                    How can I help?
+                </h2>
+
+                <p>
+                    Ask me for the best mobile deal or
+                    ask a question about mobile phones.
+                </p>
+
+
+                <div class="suggestions">
+
+                    <button
+                        class="suggestion"
+                        data-query="Find me an iPhone 16 under ₹70,000"
+                    >
+                        Find an iPhone under ₹70,000
+                    </button>
+
+
+                    <button
+                        class="suggestion"
+                        data-query="What brands are available?"
+                    >
+                        What brands are available?
+                    </button>
+
+
+                    <button
+                        class="suggestion"
+                        data-query="Which retailer has the cheapest iPhone 16?"
+                    >
+                        Cheapest iPhone 16
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- TYPING -->
+
+        <div
+            id="typingIndicator"
+            class="typing-indicator hidden"
+        >
+
+            <span></span>
+            <span></span>
+            <span></span>
+
+        </div>
+
+
+        <!-- INPUT -->
+
+        <form
+            id="chatForm"
+            class="chat-input-area"
+        >
+
+            <div class="input-wrapper">
+
+                <textarea
+                    id="messageInput"
+                    rows="1"
+                    placeholder="Ask about a phone or deal..."
+                    autocomplete="off"
+                ></textarea>
+
+
+                <button
+                    id="sendButton"
+                    type="submit"
+                    class="send-button"
+                    title="Send"
+                >
+                    ➤
+                </button>
+
+            </div>
+
+
+            <div class="input-footer">
+
+                <span>
+                    Press Enter to send · Shift + Enter for a new line
+                </span>
+
+            </div>
+
+        </form>
+
+    </main>
+
+</div>
+
+
+<!-- CLEAR CHAT MODAL -->
+
+<div
+    id="clearModal"
+    class="modal-overlay hidden"
+>
+
+    <div class="modal">
+
+        <div class="modal-icon">
+            ⚠️
+        </div>
+
+        <h3>
+            Clear conversation?
+        </h3>
+
+        <p>
+            This will permanently delete the current
+            conversation from chat memory.
+        </p>
+
+        <div class="modal-actions">
+
+            <button
+                id="cancelClearButton"
+                class="secondary-button"
+            >
+                Cancel
+            </button>
+
+            <button
+                id="confirmClearButton"
+                class="danger-button"
+            >
+                Clear Chat
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script src="/static/js/chat.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,39 @@
+[project]
+name = "best_mobile_deal_finder_agent"
+version = "0.1.0"
+description = "AI-powered mobile deals finder agent using LangGraph, FastAPI, PostgreSQL and Qwen3"
+readme = "README.md"
+authors = [
+    { name = "Kav1n-Lal", email = "kavingilbert@gmail.com" }
+]
+requires-python = ">=3.12,<3.13"
+
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "pydantic",
+    "pydantic-settings",
+    "python-dotenv>=1.2.3",
+    "langgraph",
+    "langchain-core",
+    "langchain-ollama",
+    "jinja2>=3.1.6",
+    "psycopg[binary]>=3.3.5",
+    "psycopg-pool>=3.3.1",
+    "langgraph-checkpoint-sqlite>=3.1.1",
+    "pandas>=3.0.5",
+    "selenium>=4.49.0",
+    "webdriver-manager>=4.1.2",
+    "langchain-openai>=1.6.2",
+]
+
+[dependency-groups]
+dev = [
+    "deepeval>=2.9.3",
+    "pytest>=9.1.1",
+    "pytest-asyncio>=1.4.0",
+]
+
+[build-system]
+requires = ["uv_build>=0.12.5,<0.13.0"]
+build-backend = "uv_build"
