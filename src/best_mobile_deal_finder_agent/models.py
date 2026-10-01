@@ -1,5 +1,4 @@
 from typing import Literal
-
 from pydantic import BaseModel, Field
 
 
@@ -12,7 +11,7 @@ class QueryRoute(BaseModel):
 
 class ProductQuery(BaseModel):
     brand: str | None = None
-    # memory: Optional[str] = None
+    # model: str | None = None
     memory: str | None = None
     storage:str | None = None
     budget: float | None = None

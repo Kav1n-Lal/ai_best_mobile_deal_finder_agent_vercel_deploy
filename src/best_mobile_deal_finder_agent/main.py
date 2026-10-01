@@ -7,6 +7,10 @@ from pydantic import BaseModel
 
 from best_mobile_deal_finder_agent.graph import graph
 from best_mobile_deal_finder_agent.memory import memory
+from best_mobile_deal_finder_agent.db import get_connection
+
+from uuid import UUID
+
 
 app = FastAPI(
     title="Best Mobile Deals Agent",
@@ -34,7 +38,8 @@ app.mount(
 
 class DealRequest(BaseModel):
     query: str
-    thread_id: str
+    thread_id: UUID
+
 
 
 # ---------------------------------------------------------
@@ -68,7 +73,6 @@ def chat_page(
         },
     )
 
-
 # ---------------------------------------------------------
 # Deals API
 # ---------------------------------------------------------
@@ -82,7 +86,7 @@ def find_best_deal(request: DealRequest):
             detail="Query cannot be empty.",
         )
 
-    if not request.thread_id.strip():
+    if not str(request.thread_id).strip():
         raise HTTPException(
             status_code=400,
             detail="thread_id cannot be empty.",
@@ -90,7 +94,7 @@ def find_best_deal(request: DealRequest):
 
     config = {
         "configurable": {
-            "thread_id": request.thread_id,
+            "thread_id": str(request.thread_id),
         }
     }
 
@@ -111,6 +115,9 @@ def find_best_deal(request: DealRequest):
         best_deal = result.get("best_deal")
         extracted_query = result.get("extracted_query")
 
+        second_best_deal = result.get("second_best_deal")
+        third_best_deal = result.get("third_best_deal")
+
         return {
             "query": request.query,
 
@@ -130,11 +137,16 @@ def find_best_deal(request: DealRequest):
 
             "alternatives": [
                 deal.model_dump()
-                for deal in result.get("alternatives", [])
+                for deal in [
+                    second_best_deal,
+                    third_best_deal,
+                ]
+                if deal
             ],
 
             "response": result.get("response", ""),
         }
+
 
     except Exception as exc:
         raise HTTPException(
@@ -185,6 +197,39 @@ def get_chat_history(thread_id: str):
             status_code=500,
             detail=f"Failed to load chat history: {exc!s}",
         ) from exc
+
+# @app.get("/history/{thread_id}")
+# def get_chat_history(thread_id: UUID):
+#     thread_id_str = str(thread_id)
+
+#     config = {
+#         "configurable": {
+#             "thread_id": thread_id_str,
+#         }
+#     }
+
+#     try:
+#         state = graph.get_state(config)
+
+#         messages = []
+
+#         for message in state.values.get("messages", []):
+#             messages.append({
+#                 "type": message.type,
+#                 "content": message.content,
+#             })
+
+#         return {
+#             "thread_id": thread_id_str,
+#             "messages": messages,
+#         }
+
+#     except Exception as exc:
+#         raise HTTPException(
+#             status_code=500,
+#             detail=f"Failed to load chat history: {exc!s}",
+#         ) from exc
+
 
 @app.delete("/history/{thread_id}")
 def clear_chat_history(thread_id: str):

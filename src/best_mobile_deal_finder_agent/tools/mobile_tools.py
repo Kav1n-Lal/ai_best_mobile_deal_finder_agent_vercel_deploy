@@ -1,29 +1,29 @@
-
 from langchain_core.tools import tool
-
 from best_mobile_deal_finder_agent.db import get_connection
-
 
 @tool
 def get_only_the_available_mobile_brands() -> list[str]:
-    """Get all phone brands available in the PostgreSQL database."""
+    """Get all phone brands currently available in the database."""
 
     query = """
         SELECT DISTINCT brand
         FROM retailer_data
         WHERE brand IS NOT NULL
+          AND availability = TRUE
         ORDER BY brand;
     """
 
     with get_connection() as conn:
-        rows = conn.execute(query).fetchall()
+        with conn.cursor() as cursor:
+            cursor.execute(query)
+            rows = cursor.fetchall()
 
-    return [row["brand"] for row in rows]
+    return [row[0] for row in rows]
 
 
 @tool
 def get_available_mobile_brands_and_models() -> list[dict]:
-    """Get all unique phone brand and model combinations."""
+    """Get all unique available phone brand and model combinations."""
 
     query = """
         SELECT DISTINCT
@@ -32,16 +32,19 @@ def get_available_mobile_brands_and_models() -> list[dict]:
         FROM retailer_data
         WHERE brand IS NOT NULL
           AND model IS NOT NULL
+          AND availability = TRUE
         ORDER BY brand, model;
     """
 
     with get_connection() as conn:
-        rows = conn.execute(query).fetchall()
+        with conn.cursor() as cursor:
+            cursor.execute(query)
+            rows = cursor.fetchall()
 
     return [
         {
-            "brand": row["brand"],
-            "model": row["model"],
+            "brand": row[0],
+            "model": row[1],
         }
         for row in rows
     ]
@@ -49,20 +52,21 @@ def get_available_mobile_brands_and_models() -> list[dict]:
 
 @tool
 def get_retailer_count() -> int:
-    """Get the number of unique retailers selling phones."""
+    """Get the number of unique retailers currently selling available phones."""
 
     query = """
-        SELECT COUNT(DISTINCT retailer) AS retailer_count
+        SELECT COUNT(DISTINCT retailer)
         FROM retailer_data
-        WHERE retailer IS NOT NULL;
+        WHERE retailer IS NOT NULL
+          AND availability = TRUE;
     """
 
     with get_connection() as conn:
-        row = conn.execute(query).fetchone()
+        with conn.cursor() as cursor:
+            cursor.execute(query)
+            row = cursor.fetchone()
 
-    return row["retailer_count"]
-
-
+    return row[0] if row else 0
 
 
 @tool
@@ -84,14 +88,18 @@ def check_delivery_charge(
         WHERE LOWER(brand) = LOWER(%s)
           AND LOWER(model) = LOWER(%s)
           AND LOWER(retailer) = LOWER(%s)
+        ORDER BY updated_at DESC
         LIMIT 1;
     """
 
     with get_connection() as conn:
-        row = conn.execute(
-            query,
-            (brand, model, retailer),
-        ).fetchone()
+        with conn.cursor() as cursor:
+            cursor.execute(
+                query,
+                (brand, model, retailer),
+            )
+
+            row = cursor.fetchone()
 
     if not row:
         return {
@@ -101,9 +109,12 @@ def check_delivery_charge(
 
     return {
         "found": True,
-        "retailer": row["retailer"],
-        "brand": row["brand"],
-        "model": row["model"],
-        "delivery_charge": row["delivery_charge"],
-        "availability": row["availability"],
+        "retailer": row[0],
+        "brand": row[1],
+        "model": row[2],
+        "delivery_charge": row[3],
+        "availability": row[4],
     }
+
+
+

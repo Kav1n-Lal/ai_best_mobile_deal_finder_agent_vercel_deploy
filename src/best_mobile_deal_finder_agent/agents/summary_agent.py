@@ -1,12 +1,21 @@
 from langchain_core.messages import HumanMessage
 from langchain_openai import ChatOpenAI
+from best_mobile_deal_finder_agent.config import settings
 
 llm = ChatOpenAI(
-    model="qwen3:8b",
-    base_url="http://localhost:11434/v1",
-    api_key="ollama",
+    model=settings.openrouter_model,
+    api_key=settings.openrouter_api_key,
+    base_url=settings.openrouter_base_url,
     temperature=0,
+    max_completion_tokens=500
 )
+
+# llm = ChatOpenAI(
+#     model="qwen3:8b",
+#     base_url="http://localhost:11434/v1",
+#     api_key="ollama",
+#     temperature=0,
+# )
 
 
 def generate_chat_summary(messages):

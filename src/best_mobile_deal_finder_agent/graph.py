@@ -9,12 +9,12 @@ from best_mobile_deal_finder_agent.llm import (
 from best_mobile_deal_finder_agent.memory import (
     memory,
 )
-from best_mobile_deal_finder_agent.mobile_info_agent import mobile_data_agent
+from best_mobile_deal_finder_agent.agents.mobile_info_agent import mobile_data_agent
 from best_mobile_deal_finder_agent.models import PhoneDeal, ProductQuery
 from best_mobile_deal_finder_agent.services.deals import (
     search_deals,
 )
-from best_mobile_deal_finder_agent.summary_agent import generate_chat_summary
+from best_mobile_deal_finder_agent.agents.summary_agent import generate_chat_summary
 
 
 class GraphState(MessagesState):
@@ -28,7 +28,9 @@ class GraphState(MessagesState):
 
     best_deal: PhoneDeal | None
 
-    alternatives: list[PhoneDeal]
+    second_best_deal: PhoneDeal | None
+
+    third_best_deal: PhoneDeal | None
 
     response: str
 
@@ -105,6 +107,16 @@ def route_after_classification(state: GraphState):
 # Conversation summary
 # ---------------------------------------------------------
 
+# def summarize_node(state: GraphState):
+
+#     response = generate_chat_summary(
+#         state["messages"]
+#     )
+
+#     return {
+#         "response": response
+#     }
+
 def summarize_node(state: GraphState):
 
     response = generate_chat_summary(
@@ -112,8 +124,12 @@ def summarize_node(state: GraphState):
     )
 
     return {
-        "response": response
+        "response": response,
+        "messages": [
+            AIMessage(content=response)
+        ],
     }
+
 
 
 
@@ -206,55 +222,54 @@ def best_deal_node(state: GraphState):
 
     deals = state.get("deals", [])
 
-    available = list(deals)
-
-
-    available.sort(
+    available_deals = sorted(
+        deals,
         key=lambda deal: deal.effective_price
     )
 
-    if not available:
-        return {
-            "best_deal": None,
-            "alternatives": []
-        }
+    print("Available deals:", available_deals)
 
-    best = available[0]
-
-    print('\n')
-    print('Available Best Deal')
-    print('\n')
-    print(best)
-
-    alternatives = []
-
-    used_retailers = {best.retailer}
-
-    for deal in available[1:]:
-
-        if deal.retailer in used_retailers:
-            continue
-
-        alternatives.append(deal)
-        used_retailers.add(deal.retailer)
-
-        if len(alternatives) == 2:
-            break
-
-    print('\n')
-    print('Available Alternative Deals')
-    print('\n')
-    print(alternatives)
-    
     return {
-        "best_deal": best,
-        "alternatives": alternatives
+        "best_deal": (
+            available_deals[0]
+            if len(available_deals) > 0
+            else None
+        ),
+        "second_best_deal": (
+            available_deals[1]
+            if len(available_deals) > 1
+            else None
+        ),
+        "third_best_deal": (
+            available_deals[2]
+            if len(available_deals) > 2
+            else None
+        ),
     }
-
 
 # ---------------------------------------------------------
 # Generate deal response
 # ---------------------------------------------------------
+
+# def response_node(state: GraphState):
+
+#     response = generate_deal_response(
+#         user_query=state["user_query"],
+#         extracted_query=state["extracted_query"],
+#         best_deal=state.get("best_deal"),
+#         second_best_deal=state.get("second_best_deal", []),
+#         third_best_deal=state.get("third_best_deal", []),
+#         messages=state.get("messages", []),
+#     )
+
+#     print(response)
+
+#     return {
+#         "response": response,
+#         "messages": [
+#             AIMessage(content=response)
+#         ],
+#     }
 
 def response_node(state: GraphState):
 
@@ -262,7 +277,8 @@ def response_node(state: GraphState):
         user_query=state["user_query"],
         extracted_query=state["extracted_query"],
         best_deal=state.get("best_deal"),
-        alternatives=state.get("alternatives", []),
+        second_best_deal=state.get("second_best_deal"),
+        third_best_deal=state.get("third_best_deal"),
         messages=state.get("messages", []),
     )
 
@@ -274,6 +290,7 @@ def response_node(state: GraphState):
             AIMessage(content=response)
         ],
     }
+
 
 
 # =========================================================

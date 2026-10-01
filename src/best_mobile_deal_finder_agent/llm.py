@@ -1,27 +1,28 @@
 from langchain_openai import ChatOpenAI
 
+from best_mobile_deal_finder_agent.config import settings
+
 from best_mobile_deal_finder_agent.models import ProductQuery, QueryRoute
 
 from langchain_core.messages import BaseMessage, HumanMessage, SystemMessage
-
 # ---------------------------------------------------------
 # LLM
 # ---------------------------------------------------------
 
-# llm = ChatOpenAI(
-#     model=settings.openrouter_model,
-#     api_key=settings.openrouter_api_key,
-#     base_url=settings.openrouter_base_url,
-#     temperature=0,
-#     max_completion_tokens=1000,
-# )
-
 llm = ChatOpenAI(
-    model="qwen3:8b",
-    base_url="http://localhost:11434/v1",
-    api_key="ollama",
+    model=settings.openrouter_model,
+    api_key=settings.openrouter_api_key,
+    base_url=settings.openrouter_base_url,
     temperature=0,
+    max_completion_tokens=500,
 )
+
+# llm = ChatOpenAI(
+#     model="qwen3:8b",
+#     base_url="http://localhost:11434/v1",
+#     api_key="ollama",
+#     temperature=0,
+# )
 
 # ---------------------------------------------------------
 # Query Router
@@ -375,7 +376,8 @@ def generate_deal_response(
     user_query: str,
     extracted_query: ProductQuery,
     best_deal,
-    alternatives,
+    second_best_deal,
+    third_best_deal,
     messages,
 ):
 
@@ -383,7 +385,15 @@ def generate_deal_response(
         best_deal.model_dump_json() if best_deal else "No available deal found."
     )
 
-    alternatives_text = "\n".join(deal.model_dump_json() for deal in alternatives)
+    second_best_deal_text=(
+        second_best_deal.model_dump_json() if second_best_deal else "No available deal found."
+    )
+
+    third_best_deal_text=(
+            third_best_deal.model_dump_json() if third_best_deal else "No available deal found."
+        )
+
+    # alternatives_text = "\n".join(deal.model_dump_json() for deal in alternatives)
 
     prompt = f"""
 You are a helpful mobile phone deal assistant.
@@ -400,9 +410,13 @@ Best available deal:
 
 {best_deal_text}
 
-Other available deals:
+Second best deal:
 
-{alternatives_text}
+{second_best_deal_text}
+
+third best deal:
+
+{third_best_deal_text}
 
 Rules:
 
@@ -411,7 +425,7 @@ Rules:
 2. If the user refers to something previously discussed,
    use the previous conversation to resolve the reference.
 
-3. Do not invent information.
+3. Do not invent information, be factual while interpreting bank offers,discount, cash back, delivery charges,exchange bonus,etc.
 
 4. The effective_price provided by the database is the
    authoritative deal price.

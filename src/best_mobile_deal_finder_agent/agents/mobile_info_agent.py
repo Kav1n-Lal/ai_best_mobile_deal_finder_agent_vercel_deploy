@@ -5,6 +5,7 @@ from langchain_core.messages import (
     ToolMessage,
 )
 
+from best_mobile_deal_finder_agent.config import settings
 
 from best_mobile_deal_finder_agent.tools.mobile_tools import (
     get_only_the_available_mobile_brands,
@@ -14,20 +15,20 @@ from best_mobile_deal_finder_agent.tools.mobile_tools import (
 )
 
 
-# llm = ChatOpenAI(
-#     model=settings.openrouter_model,
-#     api_key=settings.openrouter_api_key,
-#     base_url=settings.openrouter_base_url,
-#     temperature=0,
-#     max_completion_tokens=1000
-# )
-
 llm = ChatOpenAI(
-    model="qwen3:8b",
-    base_url="http://localhost:11434/v1",
-    api_key="ollama",
+    model=settings.openrouter_model,
+    api_key=settings.openrouter_api_key,
+    base_url=settings.openrouter_base_url,
     temperature=0,
+    max_completion_tokens=500
 )
+
+# llm = ChatOpenAI(
+#     model="qwen3:8b",
+#     base_url="http://localhost:11434/v1",
+#     api_key="ollama",
+#     temperature=0,
+# )
 
 
 
@@ -65,6 +66,7 @@ def mobile_data_agent(user_query: str) -> str:
                 - available phone models
                 - retailers
                 - delivery charges
+                - cheapest mobile brands
                 - phone availability
                 - stock
                 - warranty

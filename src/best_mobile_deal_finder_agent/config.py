@@ -2,17 +2,30 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    # LLM configuration
-    openrouter_base_url: str
-    openrouter_model: str
+
+    # ---------------------------------------------------------
+    # OpenRouter
+    # ---------------------------------------------------------
+
+    openrouter_base_url: str = "https://openrouter.ai/api/v1"
+    openrouter_model: str = "qwen/qwen3-8b"
     openrouter_api_key: str
 
-    # PostgreSQL configuration
-    db_host: str
+    # ---------------------------------------------------------
+    # PostgreSQL
+    # ---------------------------------------------------------
+
+    db_host: str | None = None
     db_port: int = 5432
-    db_name: str
-    db_user: str
-    db_password: str
+    db_name: str | None = None
+    db_user: str | None = None
+    db_password: str | None = None
+
+    # ---------------------------------------------------------
+    # Neon PostgreSQL
+    # ---------------------------------------------------------
+
+    neon_database_url: str
 
     model_config = SettingsConfigDict(
         env_file=".env",
