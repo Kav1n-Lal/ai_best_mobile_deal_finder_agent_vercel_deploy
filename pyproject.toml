@@ -42,4 +42,5 @@ module-name = "best_mobile_deal_finder_agent"
 module-root = "src"
 
 [tool.vercel]
-entrypoint = "src/best_mobile_deal_finder_agent/main.py"
+entrypoint = "src.best_mobile_deal_finder_agent.main:app"
+
