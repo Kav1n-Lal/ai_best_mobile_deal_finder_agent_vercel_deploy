@@ -1,5 +1,5 @@
 [project]
-name = "best_mobile_deal_finder_agent"
+name = "ai_best_mobile_deal_finder_agent_vercel_deploy"
 version = "0.1.0"
 description = "AI-powered mobile deals finder agent using LangGraph, FastAPI, PostgreSQL and Qwen3"
 readme = "README.md"
@@ -18,17 +18,17 @@ dependencies = [
     "langchain-core",
     "langchain-ollama",
     "jinja2>=3.1.6",
-    "psycopg[binary]>=3.3.5",
+    "psycopg[binary,pool]>=3.3.5",
     "psycopg-pool>=3.3.1",
-    "langgraph-checkpoint-sqlite>=3.1.1",
     "pandas>=3.0.5",
     "langchain-openai>=1.6.2",
-    "psycopg2-binary>=2.9.13",
+    "sqlalchemy>=2.1.1",
+    "langgraph-checkpoint-postgres>=3.1.2",
 ]
 
 [dependency-groups]
 dev = [
-    "deepeval>=2.9.3",
+    "deepeval>=4.0.2",
     "pytest>=9.1.1",
     "pytest-asyncio>=1.4.0",
 ]
@@ -36,3 +36,10 @@ dev = [
 [build-system]
 requires = ["uv_build>=0.12.5,<0.13.0"]
 build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "best_mobile_deal_finder_agent"
+module-root = "src"
+
+[tool.vercel]
+entrypoint = "src/best_mobile_deal_finder_agent/main.py"
